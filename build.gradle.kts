@@ -19,12 +19,12 @@ val gitCommitCount = "git rev-list HEAD --count".execute().toInt()
 val gitCommitHash = "git rev-parse --verify --short HEAD".execute()
 
 // also the soname
-val moduleId by extra("sample")
-val moduleName by extra("Zygisk Module Sample")
-val verName by extra("v1")
+val moduleId by extra("zygisk_il2dump")
+val moduleName by extra("Zygisk Il2Dump")
+val verName by extra("v1.0.2")
 val verCode by extra(gitCommitCount)
 val commitHash by extra(gitCommitHash)
-val abiList by extra(listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64"))
+val abiList by extra(listOf("arm64-v8a", "armeabi-v7a"))
 
 val androidMinSdkVersion by extra(26)
 val androidTargetSdkVersion by extra(34)

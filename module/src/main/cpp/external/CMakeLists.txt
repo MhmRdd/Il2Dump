@@ -19,10 +19,10 @@ set(LIBCXX_SOURCES
         functional.cpp
         future.cpp
         hash.cpp
-        #        ios.cpp
-        #        ios.instantiations.cpp
-        #        iostream.cpp
-        #        locale.cpp
+                ios.cpp
+                ios.instantiations.cpp
+                iostream.cpp
+                locale.cpp
         memory.cpp
         mutex.cpp
         mutex_destructor.cpp
@@ -55,7 +55,7 @@ set(LIBCXX_EXPORT_FLAGS
         -D_LIBCPP_BUILDING_LIBRARY
         -D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS
         -D_LIBCXXABI_NO_EXCEPTIONS
-        -D_LIBCPP_HAS_NO_LOCALIZATION
+        #-D_LIBCPP_HAS_NO_LOCALIZATION
 )
 set(LIBCXX_FLAGS
         -fvisibility-global-new-delete-hidden

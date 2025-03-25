@@ -14,7 +14,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Sample"
+rootProject.name = "Il2Dump"
 include(
     ":module"
 )

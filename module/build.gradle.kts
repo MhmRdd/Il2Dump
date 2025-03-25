@@ -46,6 +46,8 @@ android {
     }
 }
 
+val adbPath = "C:/Users/riad8/AppData/Local/Android/Sdk/platform-tools/adb"
+
 androidComponents.onVariants { variant ->
     afterEvaluate {
         val variantLowered = variant.name.lowercase()
@@ -55,8 +57,8 @@ androidComponents.onVariants { variant ->
             when (it) {
                 "arm64-v8a" -> "arm64"
                 "armeabi-v7a" -> "arm"
-                "x86" -> "x86"
-                "x86_64" -> "x64"
+                //"x86" -> "x86"
+                //"x86_64" -> "x64"
                 else -> error("unsupported abi $it")
             }
         }.joinToString(" ")
@@ -124,14 +126,14 @@ androidComponents.onVariants { variant ->
         val pushTask = task<Exec>("push$variantCapped") {
             group = "module"
             dependsOn(zipTask)
-            commandLine("adb", "push", zipTask.outputs.files.singleFile.path, "/data/local/tmp")
+            commandLine(adbPath, "push", zipTask.outputs.files.singleFile.path, "/data/local/tmp")
         }
 
         val installKsuTask = task<Exec>("installKsu$variantCapped") {
             group = "module"
             dependsOn(pushTask)
             commandLine(
-                "adb", "shell", "su", "-c",
+                adbPath, "shell", "su", "-c",
                 "/data/adb/ksud module install /data/local/tmp/$zipFileName"
             )
         }
@@ -140,7 +142,7 @@ androidComponents.onVariants { variant ->
             group = "module"
             dependsOn(pushTask)
             commandLine(
-                "adb",
+                adbPath,
                 "shell",
                 "su",
                 "-M",
@@ -152,13 +154,13 @@ androidComponents.onVariants { variant ->
         task<Exec>("installKsuAndReboot$variantCapped") {
             group = "module"
             dependsOn(installKsuTask)
-            commandLine("adb", "reboot")
+            commandLine(adbPath, "reboot")
         }
 
         task<Exec>("installMagiskAndReboot$variantCapped") {
             group = "module"
             dependsOn(installMagiskTask)
-            commandLine("adb", "reboot")
+            commandLine(adbPath, "reboot")
         }
     }
 }

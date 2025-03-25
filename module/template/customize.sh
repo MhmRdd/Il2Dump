@@ -24,6 +24,7 @@ else
 fi
 
 VERSION=$(grep_prop version "${TMPDIR}/module.prop")
+DESCRIPTION=$(grep_prop description "${TMPDIR}/module.prop")
 ui_print "- Installing $SONAME $VERSION"
 
 # check architecture
@@ -83,3 +84,11 @@ else
   extract "$ZIPFILE" "lib/arm64-v8a/lib$SONAME.so" "$MODPATH/zygisk" true
   mv "$MODPATH/zygisk/lib$SONAME.so" "$MODPATH/zygisk/arm64-v8a.so"
 fi
+
+CONFIG_DIR=/data/adb/il2dump
+if [ ! -d "$CONFIG_DIR" ]; then
+  ui_print "- Creating configuration directory"
+  mkdir -p "$CONFIG_DIR"
+fi
+
+ui_print "- ${DESCRIPTION}"

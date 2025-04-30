@@ -16,7 +16,7 @@ A Zygisk Module to dump il2cpp/unity games based on `GlobalMetadata` & `GlobalMe
 **All configuration files & folders will take effect immediately.**
 
 ## Creating `preset.prop`
-All offsets should be filled:
+All offsets should be filled, format:
 ```properties
 library=libil2cpp.so
 s_GlobalMetadata=ABCD0D0

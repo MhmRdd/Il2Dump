@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.agp.app)
 }
 
+val sdkDir: String by rootProject.extra
+
 val moduleId: String by rootProject.extra
 val moduleName: String by rootProject.extra
 val verCode: Int by rootProject.extra
@@ -46,7 +48,7 @@ android {
     }
 }
 
-val adbPath = "C:/Users/riad8/AppData/Local/Android/Sdk/platform-tools/adb"
+val adbPath = "$sdkDir/platform-tools/adb"
 
 androidComponents.onVariants { variant ->
     afterEvaluate {

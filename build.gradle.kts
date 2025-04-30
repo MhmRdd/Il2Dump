@@ -5,6 +5,14 @@ plugins {
     alias(libs.plugins.agp.app) apply false
 }
 
+val localProperties by extra(java.util.Properties())
+val localPropertiesFile = file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+val sdkDir: String by extra(localProperties.getProperty("sdk.dir"))
+
 fun String.execute(currentWorkingDir: File = file("./")): String {
     val byteOut = ByteArrayOutputStream()
     project.exec {

@@ -49,9 +49,9 @@ using zygisk::ServerSpecializeArgs;
 
 class Il2Dump : public zygisk::ModuleBase {
 public:
-    void onLoad(Api *api, JNIEnv *env) override {
-        this->api = api;
-        this->env = env;
+    void onLoad(Api *_api, JNIEnv *_env) override {
+        this->api = _api;
+        this->env = _env;
     }
 
     void preAppSpecialize(AppSpecializeArgs *args) override {
@@ -71,8 +71,8 @@ public:
     }
 
 private:
-    Api *api;
-    JNIEnv *env;
+    Api *api{};
+    JNIEnv *env{};
 	int fd = -1;
 
     void preSpecialize(const char* process) {
@@ -139,7 +139,6 @@ private:
 			return;
 		}
 		il2Package = std::string(process);
-		LOGI("We are still connected horray!");
 		LOGD("library=[%s]", il2Name.c_str());
 		LOGD("GlobalMetadata=[%lx]", (uintptr_t) s_GlobalMetadata);
 		LOGD("GlobalMetadataHeader=[%lx]", (uintptr_t) s_GlobalMetadataHeader);

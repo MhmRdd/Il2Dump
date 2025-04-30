@@ -1,16 +1,31 @@
-# Zygisk Module Template
+# Il2Dump
 
-An Zygisk Module Template based on zygisk-module-sample. Both cmake and ndk-build are supported.
+A Zygisk Module to dump il2cpp games based on input of `MetadataRegistration` & `CodeRegistration` offsets.
+
+> This module breaks SELinux policy of `untrusted_app` by allowing `write` on `unix_stream_socket` class to `zygote`. (This beceause it's used to transact vectors of dump from game to an external folder in `/data/adb/il2dump/*/dump.cs`)
 
 ## Usage
 
-1. Edit your moduleId in [build.gradle.kts](./build.gradle.kts) (It's also your module's soname).  
-2. Edit other module info in build.gradle.kts or module/template/module.prop.  
-3. Write your code in module/src/main/cpp .  
-4. Run gradle task `:zipDebug` or `:zipRelease` to build the module. 
-   Your module zip will be generated under `module/release`. 
-5. Run gradle task `:install(Magisk|Ksu)[AndReboot](Debug|Release)` to flash your module (optional).  
+1. Flash this module and reboot.
+2. Create directory named as the package name of the targeted game in `/data/adb/il2dump/`.
+3. Create & fill a `preset.prop` file in the directory.
+4. Run the game and observe logs for the tag `Il2Dump` for any errors.
+   Your `dump.cs` will be generated under the directory.
+   If `dump.cs` already exists, the module will automatically ignore future dumps & close itself until deleted.
 
-## See also
+**All configuration files & folders will take effect immediately.**
 
-https://github.com/topjohnwu/zygisk-module-sample
+## Creating `preset.prop`
+All offsets should be filled:
+```properties
+library=libil2cpp.so
+s_GlobalMetadata=ABCD0D0
+s_GlobalMetadataHeader=ABCD0D0
+s_Il2CppCodeRegistration=ABCD0B0
+s_Il2CppMetadataRegistration=ABCD0B8
+```
+
+## Acknowledgement
+
+- [Zygisk Il2CppDumper](https://github.com/Perfare/Zygisk-Il2CppDumper)
+- Arcy

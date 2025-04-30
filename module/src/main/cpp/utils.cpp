@@ -1,6 +1,11 @@
 
 
+#ifdef DEBUG_BUILD
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, "Il2Dump", __VA_ARGS__)
+#else
+#define LOGD(...) ((void) 0)
+#endif
+
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, "Il2Dump", __VA_ARGS__)
 #define LOGF(...) __android_log_print(ANDROID_LOG_FATAL, "Il2Dump", __VA_ARGS__)
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "Il2Dump", __VA_ARGS__)

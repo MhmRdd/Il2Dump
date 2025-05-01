@@ -1,4 +1,5 @@
 # Il2Dump
+[![Android CI status](https://github.com/MhmRdd/Il2Dump/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/MhmRdd/Il2Dump/actions/workflows/build.yml)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
 A Zygisk Module to dump il2cpp/unity games based on `GlobalMetadata` & `GlobalMetadataHeader` & `MetadataRegistration` & `CodeRegistration` offsets.

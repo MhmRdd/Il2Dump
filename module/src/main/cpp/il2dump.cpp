@@ -76,10 +76,6 @@ private:
 	int fd = -1;
 
     void preSpecialize(const char* process) {
-		/*if (strcmp(process, "com.activision.callofduty.shooter") != 0) {
-			api->setOption(zygisk::Option::DLCLOSE_MODULE_LIBRARY);
-			return;
-		}*/
 		fd = api->connectCompanion();
 		xwrite(fd, process);
 		auto pstatus = xread<bool>(fd);
@@ -191,6 +187,8 @@ static void Il2Comp(int fd) {
 				std::string library;
 				uintptr_t GlobalMetadata = 0, GlobalMetadataHeader = 0, Il2CppCodeRegistration = 0, Il2CppMetadataRegistration = 0;
 				while (std::getline(presetFile, prop)) {
+					if (prop.starts_with('#'))
+						continue;
 					size_t eqpos = prop.find('=');
 					if (eqpos == std::string::npos)
 						continue;
@@ -240,7 +238,9 @@ static void Il2Comp(int fd) {
 						}
 					}
 				}
-				if (GlobalMetadata && GlobalMetadataHeader && Il2CppCodeRegistration && Il2CppMetadataRegistration) {
+				if (!GlobalMetadataHeader)
+					GlobalMetadataHeader = GlobalMetadata;
+				if (Il2CppCodeRegistration && Il2CppMetadataRegistration) {
 					status = true;
 					xwrite(fd, status);
 					xwrite(fd, library);
@@ -262,7 +262,7 @@ static void Il2Comp(int fd) {
 							if (dumpPtr) {
 								dump << *dumpPtr;
 							} else {
-								dump << "// [Il2Dump]: Failed to transact vector `" << i << "`!" << std::endl;
+								dump << std::endl << "// [Il2Dump]: Failed to transact vector[" << i << "]!";
 							}
 						}
 						dump.close();

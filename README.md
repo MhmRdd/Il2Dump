@@ -2,7 +2,7 @@
 [![Android CI status](https://github.com/MhmRdd/Il2Dump/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/MhmRdd/Il2Dump/actions/workflows/build.yml)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-A Zygisk Module to dump il2cpp/unity games based on `GlobalMetadata` & `GlobalMetadataHeader` & `MetadataRegistration` & `CodeRegistration` offsets.
+A Zygisk Module to dump il2cpp/unity games based on `GlobalMetadata` (optional) & `GlobalMetadataHeader` (optional) & `MetadataRegistration` & `CodeRegistration` offsets.
 
 > [!WARNING]
 > This module breaks SELinux policy of `untrusted_app` by allowing `write` on `unix_stream_socket` class to `zygote`.<br/>
@@ -20,11 +20,11 @@ A Zygisk Module to dump il2cpp/unity games based on `GlobalMetadata` & `GlobalMe
 **All configuration files & folders will take effect immediately.**
 
 ## Creating `preset.prop`
-All offsets should be filled, format:
+format:
 ```properties
 library=libil2cpp.so
-s_GlobalMetadata=ABCD0D0
-s_GlobalMetadataHeader=ABCD0D0
+#s_GlobalMetadata=ABCD0D0
+#s_GlobalMetadataHeader=ABCD0D0
 s_Il2CppCodeRegistration=ABCD0B0
 s_Il2CppMetadataRegistration=ABCD0B8
 ```
@@ -60,6 +60,8 @@ void MetadataCache::Initialize()
     /* ... */
 }
 ```
+> [!TIP]
+> `s_GlobalMetadata` can be obtained automatically by Il2Dump (if not inputted manually), whereas `s_GlobalMetadataHeader` is set to default (as `s_GlobalMetadata`) when not specified.
 
 ## Acknowledgement
 

@@ -564,7 +564,7 @@ std::unique_ptr<uintptr_t> xread<uintptr_t>(int fd) {
 	return std::make_unique<uintptr_t>(data);
 }
 
-bool monitorIl2Addr() {
+static bool monitorIl2Addr() {
 	if (il2Name.empty()) {
 		LOGE("Invalid library name to dump, abort!");
 		return false;
@@ -607,6 +607,40 @@ bool monitorIl2Addr() {
 	return false;
 }
 
+static void *getGlobalMetadata() {
+	if (s_GlobalMetadata)
+		return (void*) getPointer(il2Addr + (uintptr_t) s_GlobalMetadata);
+	std::ifstream maps("/proc/self/maps");
+	std::string line;
+	if (!maps) {
+		LOGF("Unable to open `/proc/self/maps`, abort!");
+		return nullptr;
+	} else if (!maps.is_open()) {
+		LOGE("Unable to open `/proc/self/maps`, abort!");
+		return nullptr;
+	}
+	while (std::getline(maps, line)) {
+		std::istringstream iss(line);
+		std::string addr_range, perms, offset, dev, inode, path;
+		uintptr_t start;
+		if (!(iss >> addr_range >> perms >> offset >> dev >> inode)) continue;
+		std::getline(iss >> std::ws, path);
+		if (perms[0] == 'r' || perms[1] == 'w') {
+			size_t dash = addr_range.find('-');
+			if (dash == std::string::npos) continue;
+			start = std::stoul(addr_range.substr(0, dash), nullptr, 16);
+			if (path.find(il2Package) != std::string::npos &&
+				path.ends_with("/il2cpp/Metadata/global-metadata.dat")
+				) {
+				maps.close();
+				return (void*) start;
+			}
+		}
+	}
+	maps.close();
+	return nullptr;
+}
+
 void dumpIl2(int fd, zygisk::Api* api) {
 	if (!monitorIl2Addr()) {
 		error:
@@ -620,26 +654,29 @@ void dumpIl2(int fd, zygisk::Api* api) {
 	}
 	std::this_thread::sleep_for(std::chrono::seconds(2));
 	MountGuard rodata((void*) (il2Addr + (uintptr_t) s_GlobalMetadata), PROT_READ);
-	s_GlobalMetadata = reinterpret_cast<void *>(
-			getPointer(il2Addr + (uintptr_t) s_GlobalMetadata));
-	s_GlobalMetadataHeader = ReadPointer<Il2CppGlobalMetadataHeader>(
-			getPointer(il2Addr + (uintptr_t) s_GlobalMetadataHeader));
-	s_Il2CppMetadataRegistration = ReadPointer<Il2CppMetadataRegistration>(
-			getPointer(il2Addr + (uintptr_t) s_Il2CppMetadataRegistration));
-	s_Il2CppCodeRegistration = ReadPointer<Il2CppCodeRegistration>(
-			getPointer(il2Addr + (uintptr_t) s_Il2CppCodeRegistration));
+	s_GlobalMetadata = getGlobalMetadata();
 	if (!s_GlobalMetadata) {
 		LOGE("Invalid pointer dereference at `GlobalMetadata`!");
 		goto error;
 	}
+	s_GlobalMetadataHeader = s_GlobalMetadataHeader ?
+			ReadPointer<Il2CppGlobalMetadataHeader>(
+			 getPointer(il2Addr + (uintptr_t) s_GlobalMetadataHeader)
+			 ) : ReadPointer<Il2CppGlobalMetadataHeader>(
+			 (uintptr_t ) s_GlobalMetadata
+			);
 	if (!s_GlobalMetadataHeader) {
 		LOGE("Invalid pointer dereference at `GlobalMetadataHeader`!");
 		goto error;
 	}
+	s_Il2CppMetadataRegistration = ReadPointer<Il2CppMetadataRegistration>(
+			getPointer(il2Addr + (uintptr_t) s_Il2CppMetadataRegistration));
 	if (!s_Il2CppMetadataRegistration) {
 		LOGE("Invalid pointer dereference at `Il2CppMetadataRegistration`!");
 		goto error;
 	}
+	s_Il2CppCodeRegistration = ReadPointer<Il2CppCodeRegistration>(
+			getPointer(il2Addr + (uintptr_t) s_Il2CppCodeRegistration));
 	if (!s_Il2CppCodeRegistration) {
 		LOGE("Invalid pointer dereference at `Il2CppCodeRegistration`!");
 		goto error;

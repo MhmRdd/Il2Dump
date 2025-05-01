@@ -34,7 +34,7 @@ val gitCommitHash = "git rev-parse --verify --short HEAD".execute()
 // also the soname
 val moduleId by extra("zygisk_il2dump")
 val moduleName by extra("Zygisk Il2Dump")
-val verName by extra("v1.0.2")
+val verName by extra("v1.0.3")
 val verCode by extra(gitCommitCount)
 val commitHash by extra(gitCommitHash)
 val abiList by extra(listOf("arm64-v8a", "armeabi-v7a"))
@@ -53,7 +53,7 @@ tasks.register("Delete", Delete::class) {
 
 fun Project.configureBaseExtension() {
     extensions.findByType(AppExtension::class)?.run {
-        namespace = "io.github.a13e300.zygisk.module.sample"
+        namespace = "io.github.mhmrdd.zygisk.module.il2dump"
         compileSdkVersion(androidCompileSdkVersion)
         ndkVersion = androidCompileNdkVersion
         buildToolsVersion = androidBuildToolsVersion

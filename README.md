@@ -3,6 +3,7 @@
 
 A Zygisk Module to dump il2cpp/unity games based on `GlobalMetadata` & `GlobalMetadataHeader` & `MetadataRegistration` & `CodeRegistration` offsets.
 
+> [!WARNING]
 > This module breaks SELinux policy of `untrusted_app` by allowing `write` on `unix_stream_socket` class to `zygote`. (This beceause it's used to transact vectors of dump from game to an external folder in `/data/adb/il2dump/*/dump.cs`)
 
 ## Usage

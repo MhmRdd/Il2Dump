@@ -29,6 +29,38 @@ s_Il2CppCodeRegistration=ABCD0B0
 s_Il2CppMetadataRegistration=ABCD0B8
 ```
 
+
+
+## Finding necessary offsets
+To identify required offsets for working with **libil2cpp or libunity**, you can inspect the official Unity source implementation, precisely at [MetadataCache.cpp](https://github.com/dreamanlan/il2cpp_ref/blob/master/libil2cpp/vm/MetadataCache.cpp#L143), you can look for useful **patterns or strings** to identify these structures in the binary using reverse engineering tools like **IDA, Ghidra, ...**
+```cpp
+void MetadataCache::Register(const Il2CppCodeRegistration* const codeRegistration, const Il2CppMetadataRegistration* const metadataRegistration, const Il2CppCodeGenOptions* const codeGenOptions)
+{
+    s_Il2CppCodeRegistration = codeRegistration; /* Il2CppCodeRegistration */
+    s_Il2CppMetadataRegistration = metadataRegistration; /* Il2CppMetadataRegistration */
+    s_Il2CppCodeGenOptions = codeGenOptions;
+
+    for (int32_t j = 0; j < metadataRegistration->genericClassesCount; j++)
+        if (metadataRegistration->genericClasses[j]->typeDefinitionIndex != kTypeIndexInvalid)
+            metadata::GenericMetadata::RegisterGenericClass(metadataRegistration->genericClasses[j]);
+
+    for (int32_t i = 0; i < metadataRegistration->genericInstsCount; i++)
+        s_GenericInstSet.insert(metadataRegistration->genericInsts[i]);
+
+    s_InteropData.assign_external(codeRegistration->interopData, codeRegistration->interopDataCount);
+}
+
+static void* s_GlobalMetadata;
+static const Il2CppGlobalMetadataHeader* s_GlobalMetadataHeader;
+
+void MetadataCache::Initialize()
+{
+    s_GlobalMetadata = vm::MetadataLoader::LoadMetadataFile("global-metadata.dat"); /* GlobalMetadata */
+    s_GlobalMetadataHeader = (const Il2CppGlobalMetadataHeader*)s_GlobalMetadata; /* GlobalMetadataHeader */
+    /* ... */
+}
+```
+
 ## Acknowledgement
 
 - [Zygisk Il2CppDumper](https://github.com/Perfare/Zygisk-Il2CppDumper)

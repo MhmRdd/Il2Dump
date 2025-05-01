@@ -12,8 +12,8 @@ A Zygisk Module to dump il2cpp/unity games based on `GlobalMetadata` & `GlobalMe
 1. Flash this module and reboot.
 2. Create directory named as the package name of the targeted game in `/data/adb/il2dump/`.
 3. Create & fill a `preset.prop` file in the directory.
-4. Run the game and observe logs for the tag `Il2Dump` for any errors.
-   Your `dump.cs` will be generated under the directory.
+4. Run the game and observe logs for the tag `Il2Dump` for any errors.<br/>
+   Your `dump.cs` will be generated under the directory.<br/>
    If `dump.cs` already exists, the module will automatically ignore future dumps & close itself until deleted.
 
 **All configuration files & folders will take effect immediately.**
